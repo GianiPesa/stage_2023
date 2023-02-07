@@ -1,3 +1,4 @@
+# This file is a template, and might need editing before it works on your project.
 # To contribute improvements to CI/CD templates, please follow the Development guide at:
 # https://docs.gitlab.com/ee/development/cicd/templates.html
 # This specific template is located at:
@@ -6,10 +7,17 @@
 ---
 # All available Hugo versions are listed here:
 # https://gitlab.com/pages/hugo/container_registry
-image: registry.gitlab.com/pages/hugo/hugo_extended:lastest
+image: "${CI_TEMPLATE_REGISTRY_HOST}/pages/hugo:latest"
 
 variables:
   GIT_SUBMODULE_STRATEGY: recursive
+
+test:
+  script:
+    - hugo
+  except:
+    variables:
+      - $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
 
 pages:
   script:
@@ -17,5 +25,6 @@ pages:
   artifacts:
     paths:
       - public
-  rules:
-  - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+  only:
+    variables:
+      - $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
